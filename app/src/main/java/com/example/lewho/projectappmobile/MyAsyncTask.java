@@ -46,9 +46,10 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
             tv = (TextView) param[1];
             isListView = false;
         }else{
-            lv = (ListView) param[1];
+            sa = (StationAdapter) param[1];
             //sa = (StationAdapteur) param[2];
             context = (Context) param[2];
+            lv = (ListView) param[3];
         }
 
         BufferedReader in;
@@ -63,8 +64,9 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
         HttpsURLConnection urlConnection = null;
         try {
             urlConnection = (HttpsURLConnection) url.openConnection();
-
-        if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK){
+            System.out.println(urlConnection.getResponseCode());
+            System.out.println(HttpsURLConnection.HTTP_OK);
+        if (urlConnection.getResponseCode() == HttpsURLConnection.HTTP_OK){//HttpsURLConnection.HTTP_OK){
             in = new BufferedReader(
                     new InputStreamReader(urlConnection.getInputStream() ) );
             //Log.d ("Async" , in.readLine()); // ou boucle tant qu’il y a des lignes
@@ -72,13 +74,15 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
             if (isListView) {
                 String next;
                 int i = 1;
+                sb = new StringBuilder();
                 while ((next = in.readLine()) != null) {
                         sb.append(next);
                 }
                 in.close();
                 List<Station> result = parceJSON(sb);
+                System.out.println("DONE few more step ...");
                 sa = new StationAdapter(context,result);
-                lv.setAdapter(sa);
+                //lv.setAdapter(sa);
                 return "Oui";
             }
             else {
@@ -96,27 +100,29 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
     }
 
     private List<Station> parceJSON(StringBuilder sb) {
-        JSONObject jsonResponse;
+        JSONArray jsonResponse;
         List<Station> res = new ArrayList<>();
+        //System.out.println(sb.toString());
 
         try {
-            jsonResponse = new JSONObject(sb.toString());
+            jsonResponse = new JSONArray(sb.toString());
             /***** Returns the value mapped by name if it exists and is a JSONArray. ***/
             /*******  Returns null otherwise.  *******/
-            JSONArray jsonMainNode = jsonResponse.optJSONArray("Android");
+            //JSONArray jsonMainNode = jsonResponse.optJSONArray("Android");
 
             /*********** Process each JSON Node ************/
 
-            int lengthJsonArr = jsonMainNode.length();
+            int lengthJsonArr = jsonResponse.length();//jsonMainNode.length();
 
             for(int i=0; i < lengthJsonArr; i++)
             {
-                JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
-
+                JSONObject jsonChildNode = jsonResponse.getJSONObject(i);
+                //int temp = 0;
+                JSONObject Pos = jsonChildNode.getJSONObject("position");
                 Station temp = new Station(Integer.parseInt(jsonChildNode.getString("number").toString()),
                         jsonChildNode.getString("name"),
                         jsonChildNode.getString("address"),
-                        new Position(Float.parseFloat(jsonChildNode.getString("lat")),Float.parseFloat(jsonChildNode.getString("lng"))),
+                        new Position(Float.parseFloat(Pos.getString("lat")),Float.parseFloat(Pos.getString("lng"))),
                         Boolean.parseBoolean(jsonChildNode.getString("banking")),
                         Boolean.parseBoolean(jsonChildNode.getString("bonus")),
                         jsonChildNode.getString("status"),
@@ -130,6 +136,8 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
 
         } catch (JSONException e) {
             e.printStackTrace();
+        }catch (Exception e){
+            e.fillInStackTrace();
         }
 
         return res;
@@ -139,6 +147,8 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
     public void onPostExecute(String result){
         if (isListView){
             //wv.loadData(result, "text/html; charset=utf-8", "UTF-8");
+            lv.setAdapter(sa);
+
         }else {
             tv.setText(result);
         }
