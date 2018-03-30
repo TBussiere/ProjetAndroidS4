@@ -31,9 +31,11 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
 
     TextView tv;
     StringBuilder sb;
-    ListView lv;
+    //ListView lv;
+    List<Station> listItem;
     StationAdapter sa;
     Context context;
+    String filter;
 
     boolean isListView;
 
@@ -41,6 +43,8 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
     protected String doInBackground(Object... param) {
         String test = (String)param[0];
         isListView = true;
+        filter = "";
+
 
         if (param[1] instanceof TextView){
             tv = (TextView) param[1];
@@ -48,8 +52,12 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
         }else{
             sa = (StationAdapter) param[1];
             //sa = (StationAdapteur) param[2];
-            context = (Context) param[2];
-            lv = (ListView) param[3];
+            //context = (Context) param[2];
+            //lv = (ListView) param[3];
+            listItem = (List<Station>) param[2];
+            if (param[3] != null) {
+                filter = (String) param[3];
+            }
         }
 
         BufferedReader in;
@@ -79,10 +87,13 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
                         sb.append(next);
                 }
                 in.close();
-                List<Station> result = parceJSON(sb);
+                listItem.clear();
+                listItem = parceJSON(sb);
+                System.out.println(listItem.size());
                 System.out.println("DONE few more step ...");
-                sa = new StationAdapter(context,result);
+                //sa = new StationAdapter(context,result);
                 //lv.setAdapter(sa);
+
                 return "Oui";
             }
             else {
@@ -147,7 +158,11 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
     public void onPostExecute(String result){
         if (isListView){
             //wv.loadData(result, "text/html; charset=utf-8", "UTF-8");
-            lv.setAdapter(sa);
+            //lv.setAdapter(sa);
+            sa.clear();
+            sa.addAll(listItem);
+            sa.getFilter().filter(filter);
+            //sa.notifyDataSetChanged();
 
         }else {
             tv.setText(result);
