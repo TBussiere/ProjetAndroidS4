@@ -1,10 +1,12 @@
 package com.example.lewho.projectappmobile;
 
+import java.io.Serializable;
+
 /**
  * Created by p1601248 on 23/03/2018.
  */
 
-public class Position {
+public class Position implements Serializable {
     private float lat;
     private float lng;
 

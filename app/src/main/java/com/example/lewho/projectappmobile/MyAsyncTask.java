@@ -6,6 +6,7 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +19,7 @@ import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,7 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
     StationAdapter sa;
     Context context;
     String filter;
+    boolean erreur;
 
     boolean isListView;
 
@@ -44,19 +47,21 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
         String test = (String)param[0];
         isListView = true;
         filter = "";
+        erreur = false;
 
 
         if (param[1] instanceof TextView){
             tv = (TextView) param[1];
             isListView = false;
         }else{
-            sa = (StationAdapter) param[1];
+            context = (Context) param[1];
+            sa = (StationAdapter) param[2];
             //sa = (StationAdapteur) param[2];
             //context = (Context) param[2];
             //lv = (ListView) param[3];
-            listItem = (List<Station>) param[2];
+            listItem = (List<Station>) param[3];
             if (param[3] != null) {
-                filter = (String) param[3];
+                filter = (String) param[4];
             }
         }
 
@@ -103,7 +108,11 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
             }
         }
         urlConnection.disconnect();
-        } catch (IOException e) {
+        } catch (UnknownHostException ex){
+            erreur = true;
+            return "Erreur Pas de connection internet";
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -157,12 +166,20 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
     @Override
     public void onPostExecute(String result){
         if (isListView){
+
+            if (erreur){
+                System.out.println(result);
+                Toast t  = Toast.makeText(context, result, Toast.LENGTH_SHORT);
+                t.show();
+            }
             //wv.loadData(result, "text/html; charset=utf-8", "UTF-8");
             //lv.setAdapter(sa);
-            sa.clear();
-            sa.addAll(listItem);
-            sa.getFilter().filter(filter);
-            //sa.notifyDataSetChanged();
+            else {
+                sa.clear();
+                sa.addAll(listItem);
+                sa.getFilter().filter(filter);
+                //sa.notifyDataSetChanged();
+            }
 
         }else {
             tv.setText(result);

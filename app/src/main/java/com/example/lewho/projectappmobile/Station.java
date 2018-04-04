@@ -1,10 +1,12 @@
 package com.example.lewho.projectappmobile;
 
+import java.io.Serializable;
+
 /**
  * Created by p1601248 on 23/03/2018.
  */
 
-public class Station {
+public class Station implements Serializable {
     private final int id;
     private final String name;
     private final String address;
