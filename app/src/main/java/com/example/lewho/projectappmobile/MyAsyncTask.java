@@ -94,7 +94,7 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
                     new InputStreamReader(urlConnection.getInputStream() ) );
             //Log.d ("Async" , in.readLine()); // ou boucle tant qu’il y a des lignes
             String res = "";
-            if (isListView) {
+            if (isListView || isInit) {
                 String next;
                 int i = 1;
                 sb = new StringBuilder();

@@ -39,11 +39,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent i = getIntent();
+        boolean err = i.getBooleanExtra("error",false);
+        if(!err){
+            items =  (List<Station>) i.getSerializableExtra("itemscharged");
+        }
+        else{
+            items = getOfflinedatas();//new ArrayList<>();
+        }
+
         JodaTimeAndroid.init(this);
         //btn = findViewById(R.id.refresh);
         //btnReload = findViewById(R.id.button);
         lv = findViewById(R.id.listView);
-        items = getOfflinedatas();//new ArrayList<>();
         sA = new StationAdapter(getApplicationContext(),items);
         lv.setAdapter(sA);
         //searchView = findViewById(R.id.action_search);
