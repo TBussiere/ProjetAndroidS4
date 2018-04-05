@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         lv.setAdapter(sA);
         //searchView = findViewById(R.id.action_search);
         //sb = new StringBuilder(50000);
-        new MyAsyncTask().execute("https://api.jcdecaux.com/vls/v1/stations?contract=lyon&apiKey=84ff98c205f198f6656c735b00e097fc7a47a1a2",getApplicationContext(),sA,items,"");
+        //new MyAsyncTask().execute("https://api.jcdecaux.com/vls/v1/stations?contract=lyon&apiKey=84ff98c205f198f6656c735b00e097fc7a47a1a2",getApplicationContext(),sA,items,"");
 
         /*btn.setOnClickListener(new View.OnClickListener() {
             @Override

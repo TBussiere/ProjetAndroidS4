@@ -1,6 +1,8 @@
 package com.example.lewho.projectappmobile;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.webkit.WebView;
@@ -15,6 +17,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -40,20 +43,22 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
     String filter;
     boolean erreur;
 
+
     boolean isListView;
+    boolean isInit;
 
     @Override
     protected String doInBackground(Object... param) {
         String test = (String)param[0];
         isListView = true;
+        isInit = false;
         filter = "";
         erreur = false;
-
 
         if (param[1] instanceof TextView){
             tv = (TextView) param[1];
             isListView = false;
-        }else{
+        }else if (param[1] instanceof Context){
             context = (Context) param[1];
             sa = (StationAdapter) param[2];
             //sa = (StationAdapteur) param[2];
@@ -63,6 +68,11 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
             if (param[3] != null) {
                 filter = (String) param[4];
             }
+        }else{
+            isInit = true;
+            isListView = false;
+            listItem = new ArrayList<>();
+            context = (Context)param[2];
         }
 
         BufferedReader in;
@@ -166,7 +176,6 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
     @Override
     public void onPostExecute(String result){
         if (isListView){
-
             if (erreur){
                 System.out.println(result);
                 Toast t  = Toast.makeText(context, result, Toast.LENGTH_SHORT);
@@ -175,14 +184,21 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
             //wv.loadData(result, "text/html; charset=utf-8", "UTF-8");
             //lv.setAdapter(sa);
             else {
-                sa.clear();
-                sa.addAll(listItem);
-                sa.getFilter().filter(filter);
-                //sa.notifyDataSetChanged();
+                    sa.clear();
+                    sa.addAll(listItem);
+                    sa.getFilter().filter(filter);
+                    //sa.notifyDataSetChanged();
             }
 
-        }else {
-            tv.setText(result);
+        }else if(isInit) {
+            launchApp(erreur);
+            //finish();
         }
+    }
+    void launchApp(boolean error){
+        Intent i = new Intent(context, MainActivity.class);
+        i.putExtra("itemscharged", (Serializable) listItem);
+        i.putExtra("error",error);
+        context.startActivity(i);//startActivity(i);
     }
 }
