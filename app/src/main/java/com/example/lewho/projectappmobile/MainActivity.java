@@ -1,16 +1,18 @@
 package com.example.lewho.projectappmobile;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-//import android.support.v7.//SearchView;
-import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ListView;
+
+import net.danlew.android.joda.JodaTimeAndroid;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,6 +22,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+//import android.support.v7.//SearchView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        JodaTimeAndroid.init(this);
         //btn = findViewById(R.id.refresh);
         //btnReload = findViewById(R.id.button);
         lv = findViewById(R.id.listView);
@@ -58,6 +63,25 @@ public class MainActivity extends AppCompatActivity {
                 lv.deferNotifyDataSetChanged();
             }
         });*/
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            //public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+                //on rÃ©cupÃ¨re la HashMap contenant les infos de notre item (titre, description, img)
+                Station station = (Station) lv.getItemAtPosition(i);
+
+                Intent myIntent = new Intent(MainActivity.this, MapActivity.class);
+//                myIntent.putExtra("clef", "test ");
+                System.out.println("************************** " + station.getPosition().getLat() + "   " + station.getPosition().getLng());
+                myIntent.putExtra("lat", station.getPosition().getLat());
+                myIntent.putExtra("lng", station.getPosition().getLng());
+                myIntent.putExtra("nom", station.getName());
+
+                startActivity(myIntent);
+            }
+        });
+
 
     }
 

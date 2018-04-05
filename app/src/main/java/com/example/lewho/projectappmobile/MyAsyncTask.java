@@ -99,7 +99,10 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
                 int i = 1;
                 sb = new StringBuilder();
                 while ((next = in.readLine()) != null) {
-                        sb.append(next);
+                    System.out.println("taille: " + next.toString().length());
+                    //System.out.println("next: " + next.toString());
+                    System.out.println("sb " + sb);
+                    sb.append(next);
                 }
                 in.close();
                 listItem.clear();
@@ -160,7 +163,7 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
                         Integer.parseInt(jsonChildNode.getString("bike_stands")),
                         Integer.parseInt(jsonChildNode.getString("available_bike_stands")),
                         Integer.parseInt(jsonChildNode.getString("available_bikes")));
-
+                System.out.println("station " + temp);
                 res.add(temp);
             }
 
