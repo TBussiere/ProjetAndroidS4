@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
             items =  (List<Station>) i.getSerializableExtra("itemscharged");
         }
         else{
-            items = getOfflinedatas();//new ArrayList<>();
+            items = getOfflinedatas();
         }
 
         JodaTimeAndroid.init(this);
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         FileOutputStream fos = null;
         try {
-            fos = openFileOutput("offline.dat",MODE_APPEND);//new FileOutputStream("offline.dat");
+            fos = openFileOutput("offline2.dat",MODE_PRIVATE);//new FileOutputStream("offline.dat");
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(items);
             System.out.println("Done Saving");
@@ -163,8 +163,9 @@ public class MainActivity extends AppCompatActivity {
     }
     List<Station> getOfflinedatas(){
         try {
-            FileInputStream fis = openFileInput("offline.dat");//new FileInputStream("offline.dat");
+            FileInputStream fis = openFileInput("offline2.dat");//new FileInputStream("offline.dat");
             ObjectInputStream ois = new ObjectInputStream(fis);
+            //System.out.println(ois.readObject());
             return (List<Station>) ois.readObject();
         } catch (IOException e) {
             e.printStackTrace();

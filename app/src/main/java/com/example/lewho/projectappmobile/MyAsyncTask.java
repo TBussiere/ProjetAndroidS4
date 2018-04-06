@@ -87,8 +87,8 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
         HttpsURLConnection urlConnection = null;
         try {
             urlConnection = (HttpsURLConnection) url.openConnection();
-            System.out.println(urlConnection.getResponseCode());
-            System.out.println(HttpsURLConnection.HTTP_OK);
+            //System.out.println(urlConnection.getResponseCode());
+            //System.out.println(HttpsURLConnection.HTTP_OK);
         if (urlConnection.getResponseCode() == HttpsURLConnection.HTTP_OK){//HttpsURLConnection.HTTP_OK){
             in = new BufferedReader(
                     new InputStreamReader(urlConnection.getInputStream() ) );
@@ -99,15 +99,15 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
                 int i = 1;
                 sb = new StringBuilder();
                 while ((next = in.readLine()) != null) {
-                    System.out.println("taille: " + next.toString().length());
+                    //System.out.println("taille: " + next.toString().length());
                     //System.out.println("next: " + next.toString());
-                    System.out.println("sb " + sb);
+                    //System.out.println("sb " + sb);
                     sb.append(next);
                 }
                 in.close();
                 listItem.clear();
                 listItem = parceJSON(sb);
-                System.out.println(listItem.size());
+                //System.out.println(listItem.size());
                 System.out.println("DONE few more step ...");
                 //sa = new StationAdapter(context,result);
                 //lv.setAdapter(sa);
@@ -163,7 +163,7 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
                         Integer.parseInt(jsonChildNode.getString("bike_stands")),
                         Integer.parseInt(jsonChildNode.getString("available_bike_stands")),
                         Integer.parseInt(jsonChildNode.getString("available_bikes")));
-                System.out.println("station " + temp);
+                //System.out.println("station " + temp);
                 res.add(temp);
             }
 
@@ -194,6 +194,10 @@ public class MyAsyncTask extends AsyncTask<Object, Void, String> {
             }
 
         }else if(isInit) {
+            if(erreur){
+                Toast t  = Toast.makeText(context, result, Toast.LENGTH_SHORT);
+                t.show();
+            }
             launchApp(erreur);
             //finish();
         }
